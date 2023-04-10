@@ -1,6 +1,7 @@
 # cordova-plugin-rustore-sdk
 
 A Cordova Android plugin which provides access to some parts of the RuStore SDK functionality
+https://help.rustore.ru/rustore/for_developers/developer-documentation
 
 ## Installation
 
