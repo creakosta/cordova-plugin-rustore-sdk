@@ -1,0 +1,30 @@
+{
+  "name": "cordova-plugin-rustore-sdk",
+  "version": "0.8.0",
+  "description": "Cordova RuStore SDK Plugin",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova",
+    "cordova-android",
+    "rustore"
+  ],
+  "author": "bumpercarz",
+  "license": "MIT",
+  "engines": {
+    "cordovaDependencies": {
+      "1.0.0": {
+        "cordova": ">=11.0.0",
+        "cordova-android": ">=10.1.1"
+      }
+    }
+  },
+  "cordova": {
+    "id": "cordova-plugin-rustore-sdk",
+    "platforms": [
+      "android"
+    ]
+  }
+}
