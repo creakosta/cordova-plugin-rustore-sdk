@@ -31,6 +31,7 @@
     <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     </config-file>
     
     <source-file src="src/android/org/apache/cordova/plugin/RuStorePlugin.kt" target-dir="src/org/apache/cordova/plugin/"/>
