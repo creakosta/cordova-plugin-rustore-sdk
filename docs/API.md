@@ -37,8 +37,6 @@ window.plugins.ruStore.openReviewForm(onSuccess, onError);
 
 ##### <a id="initPurchases"> **`initPurchases(options, onSuccess, onError): void`**
 
-initialize the purchases SDK.
-
 Add this to config.xml:
 ```javascript
   <edit-config platform="android" file="app/src/main/AndroidManifest.xml" mode="add" target="/manifest/application/activity[@android:name='MainActivity']">
@@ -50,7 +48,9 @@ Add this to config.xml:
     </intent-filter>
   </edit-config>
 ```
-
+	
+initialize the purchases SDK.
+	
 *Example:*
 
 ```javascript
@@ -69,6 +69,8 @@ deeplinkScheme: 'yourappsheme',
 
 window.plugins.ruStore.initPurchases(options, onSuccess, onError);
 ```
+*consoleApplicationId — application code from the RuStore developer console (example: https://console.rustore.ru/apps/111111).
+*deeplinkScheme - a deeplink scheme required to return to your application after paying through a third-party application (for example, SberPay or SBP). The SDK generates its host for this schema.
 
 ---
 
