@@ -39,6 +39,18 @@ window.plugins.ruStore.openReviewForm(onSuccess, onError);
 
 initialize the purchases SDK.
 
+Add this to config.xml:
+```javascript
+  <edit-config platform="android" file="app/src/main/AndroidManifest.xml" mode="add" target="/manifest/application/activity[@android:name='MainActivity']">
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="yourappsheme" />
+    </intent-filter>
+  </edit-config>
+```
+
 *Example:*
 
 ```javascript
