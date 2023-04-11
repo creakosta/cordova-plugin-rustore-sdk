@@ -44,7 +44,7 @@ Add this to config.xml:
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="yourappsheme" />
+        <data android:scheme="yourappscheme" />
     </intent-filter>
   </edit-config>
 ```
@@ -64,7 +64,7 @@ var onError = function(err) {
 
 var options = {
 consoleApplicationId: '111111',
-deeplinkScheme: 'yourappsheme',
+deeplinkScheme: 'yourappscheme',
 };
 
 window.plugins.ruStore.initPurchases(options, onSuccess, onError);
