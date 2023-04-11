@@ -63,14 +63,14 @@ var onError = function(err) {
 }
 
 var options = {
-consoleApplicationId: '123456789',
+consoleApplicationId: '111111',
 deeplinkScheme: 'yourappsheme',
 };
 
 window.plugins.ruStore.initPurchases(options, onSuccess, onError);
 ```
 **consoleApplicationId** — application code from the RuStore developer console (example: https://console.rustore.ru/apps/111111).
-**deeplinkScheme** - a deeplink scheme required to return to your application after paying through a third-party application (for example, SberPay or SBP). The SDK generates its host for this schema.*(the same as in config.xml)*
+**deeplinkScheme** - a deeplink scheme required to return to your application after paying through a third-party application (for example, SberPay or SBP). The SDK generates its host for this schema. *(the same as in config.xml)*
 
 ---
 
