@@ -1,7 +1,7 @@
 var exec = require('cordova/exec')
 var argscheck = require('cordova/argscheck')
 
-(function(global) {
+(function (global) {
 	var RuStore = function () {}
 	
 	/**
@@ -32,6 +32,7 @@ var argscheck = require('cordova/argscheck')
 				if(onError) {
 					onError("No console application ID provided!")
 				}
+			}
 			else if(options.deeplinkScheme !== undefined && typeof options.deeplinkScheme != 'string') {
 				if(onError) {
 					onError("No deeplink scheme provided!")
@@ -39,6 +40,7 @@ var argscheck = require('cordova/argscheck')
 			}
 			else {
 				exec(onSuccess, onError, 'RuStorePlugin', 'initPurchases', [options])
+			}
 		}
 	}
 	
