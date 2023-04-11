@@ -51,13 +51,11 @@ var onError = function(err) {
 }
 
 var options = {
-devKey: 'd3Ac9qPardVYZxfWmCspwL',
-appId: '123456789',
-isDebug: false,
-onInstallConversionDataListener: true // optional
+consoleApplicationId: '123456789',
+deeplinkScheme: 'yourappsheme',
 };
 
-window.plugins.ruStore.initPurchasesSdk(options, onSuccess, onError);
+window.plugins.ruStore.initPurchases(options, onSuccess, onError);
 ```
 
 ---
