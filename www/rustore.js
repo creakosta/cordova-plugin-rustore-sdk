@@ -1,5 +1,5 @@
-var exec = require('cordova/exec')
-var argscheck = require('cordova/argscheck')
+var exec = require('cordova/exec');
+var argscheck = require('cordova/argscheck');
 
 (function (global) {
 	var RuStore = function () {}
