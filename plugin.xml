@@ -31,14 +31,12 @@
     <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+      <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     </config-file>
     
-    <source-file src="src/android/org/apache/cordova/plugin/RuStorePlugin.kt" target-dir="src/org/apache/cordova/plugin"/>
+    <source-file src="src/android/RuStorePlugin.kt" target-dir="src/org/apache/cordova/plugin"/>
 
     <framework src="src/android/cordovaAF.gradle" custom="true" type="gradleReference"/>
 	  
-    <framework src="com.android.support:support-v4:+" />
-    <framework src="com.android.support:recyclerview-v7:27.1.1" />  
   </platform>
 </plugin>
