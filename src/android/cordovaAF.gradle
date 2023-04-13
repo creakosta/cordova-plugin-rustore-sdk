@@ -1,3 +1,12 @@
+cdvPluginPostBuildExtras.add({
+android {
+    sourceSets {
+        main.java {
+            srcDirs += 'src/main/kotlin'
+        }
+    }
+}
+
 repositories {
     maven {
         url = uri("https://artifactory-external.vkpartner.ru/artifactory/maven")
@@ -8,3 +17,4 @@ dependencies {
     implementation("ru.rustore.sdk:review:0.1.4")
 	implementation("ru.rustore.sdk:billingclient:0.1.7")
 }
+});
