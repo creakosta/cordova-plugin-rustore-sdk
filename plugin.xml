@@ -21,14 +21,14 @@
 
   <!-- android -->
   <platform name="android">
+	  
     <config-file target="res/xml/config.xml" parent="/*">
-      <preference name="GradlePluginKotlinEnabled" value="true" />
-
       <feature name="RuStorePlugin">
         <param name="android-package" value="org.apache.cordova.plugin.RuStorePlugin"/>
 	<param name="onload" value="true" />
       </feature>
     </config-file>
+	  
     <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
