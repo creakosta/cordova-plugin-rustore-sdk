@@ -35,7 +35,7 @@
       <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     </config-file>
     
-    <source-file src="src/android/RuStorePlugin.kt" target-dir="src/org/apache/cordova/plugin"/>
+    <source-file src="src/android/RuStorePlugin.kt" target-dir="src/main/kotlin/org/apache/cordova/plugin"/>
 
     <framework src="src/android/cordovaAF.gradle" custom="true" type="gradleReference"/>
 	  
