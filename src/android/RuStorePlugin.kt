@@ -21,12 +21,17 @@ import ru.rustore.sdk.billingclient.model.purchase.PaymentResult
 import ru.rustore.sdk.billingclient.model.purchase.PurchaseState
 import ru.rustore.sdk.billingclient.model.purchase.PaymentFinishCode
 
+import ru.rustore.sdk.billingclient.model.product.ProductsResponse
+import ru.rustore.sdk.billingclient.model.purchase.PurchasesResponse
+import ru.rustore.sdk.billingclient.model.purchase.ConfirmPurchaseResponse
+import ru.rustore.sdk.billingclient.model.purchase.FeatureAvailabilityResult
+
 class RuStorePlugin : CordovaPlugin() {
-  val app: Application
+  var app: Application
   
-  val reviewManager: RuStoreReviewManager
+  var reviewManager: RuStoreReviewManager
   
-  val userPurchases: List<Purchase>?
+  var userPurchases: List<Purchase>?
   
   /**
   * Called when initializing the plugin
@@ -36,7 +41,7 @@ class RuStorePlugin : CordovaPlugin() {
 	
 	this.app = this.cordova.getActivity().getApplication()
 	
-	val context = this.cordova.getActivity().getContext()
+	var context = this.cordova.getActivity().getContext()
 	this.reviewManager = RuStoreReviewManagerFactory.Create(context) // TODO: context of what?
   }
   
@@ -137,7 +142,7 @@ class RuStorePlugin : CordovaPlugin() {
 			  // Actually open the review and rating form
 			  // NOTE: after the interaction with the review form is complete it's not recommended to display any other forms related to review or rating, no matter which the result (either onSuccess or onFailure)
 			  // NOTE: the frequent calls to launchReviewFlow won't actually display the form with the same frequency as that is controlled on the RuStore side
-			  manager.launchReviewFlow(reviewInfo).addOnCompleteListener(object: OnCompleteListener<Unit> {
+			  reviewManager.launchReviewFlow(reviewInfo).addOnCompleteListener(object: OnCompleteListener<Unit> {
 				  override fun onSuccess(result: Unit) {
 					  // Review flow has finished, continue the app flow
 					  callbackContext.success()
@@ -219,8 +224,8 @@ class RuStorePlugin : CordovaPlugin() {
 				callbackContext.error("Failed to load the products list!" + result.errorMessage ? " (Code " + result.code + " : " + result.errorMessage + result.errorDescription ? " - " + result.errorDescription : "" + ")" : "")
 			}
 			
-			var products = new JSONArray()
-			val product = new JSONObject()
+			var products = JSONArray()
+			val product = JSONObject()
 			result.products.forEach {
 				product.put("productId", it.productId)
 				
@@ -277,10 +282,10 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				it.subscription?.let {
-					val sub = new JSONObject()
+					val sub = JSONObject()
 					
 					it.subscription.subscriptionPeriod?.let {
-						val period = new JSONObject()
+						val period = JSONObject()
 						period.put("years", it.subscription.subscriptionPeriod.years)
 						period.put("months", it.subscription.subscriptionPeriod.months)
 						period.put("days", it.subscription.subscriptionPeriod.days)
@@ -288,7 +293,7 @@ class RuStorePlugin : CordovaPlugin() {
 					}
 					
 					it.subscription.freeTrialPeriod?.let {
-						val period = new JSONObject()
+						val period = JSONObject()
 						period.put("years", it.subscription.freeTrialPeriod.years)
 						period.put("months", it.subscription.freeTrialPeriod.months)
 						period.put("days", it.subscription.freeTrialPeriod.days)
@@ -296,7 +301,7 @@ class RuStorePlugin : CordovaPlugin() {
 					}
 					
 					it.subscription.gracePeriod?.let {
-						val period = new JSONObject()
+						val period = JSONObject()
 						period.put("years", it.subscription.gracePeriod.years)
 						period.put("months", it.subscription.gracePeriod.months)
 						period.put("days", it.subscription.gracePeriod.days)
@@ -312,7 +317,7 @@ class RuStorePlugin : CordovaPlugin() {
 					}
 					
 					it.subscription.introductoryPricePeriod?.let {
-						val period = new JSONObject()
+						val period = JSONObject()
 						period.put("years", it.subscription.introductoryPricePeriod.years)
 						period.put("months", it.subscription.introductoryPricePeriod.months)
 						period.put("days", it.subscription.introductoryPricePeriod.days)
@@ -342,12 +347,14 @@ class RuStorePlugin : CordovaPlugin() {
   private fun getPurchases(args: JSONArray, callbackContext: CallbackContext) {
 	// TODO: check if initialized?
 	
-	val purchaseId = args.getString(0)
+	// TODO: no args
 	
-	if(purchaseId.isEmpty())
-		callbackContext.error("Empty purchase ID provided!")
+	//val purchaseId = args.getString(0)
 	
-	RuStoreBillingClient.purchases.getPurchases(purchaseId)
+	//if(purchaseId.isEmpty())
+		//callbackContext.error("Empty purchase ID provided!")
+	
+	RuStoreBillingClient.purchases.getPurchases()
 	.addOnCompleteListener(object: OnCompleteListener<PurchasesResponse> {
 		override fun onSuccess(result: PurchasesResponse) {
 			if(result.purchases == null) {
@@ -356,8 +363,8 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			userPurchases = result.purchases
 			
-			var purchases = new JSONArray()
-			val purchase = new JSONObject()
+			var purchases = JSONArray()
+			val purchase = JSONObject()
 			result.purchases.forEach {
 				it.purchaseId?.let {
 					purchase.put("purchaseId", it.purchaseId)
@@ -464,11 +471,11 @@ class RuStorePlugin : CordovaPlugin() {
 	.addOnCompleteListener(object: OnCompleteListener<PaymentResult> {
 		override fun onSuccess(result: PaymentResult) {
 			when(result) {
-				val response = new JSONObject()
+				val response = JSONObject()
 				
 				// The purchase have not been completed
 				PaymentResult.InvoiceResult -> {
-					val success = false
+					var success = false
 					
 					response.put("invoiceId", result.invoiceId)
 					
@@ -517,7 +524,7 @@ class RuStorePlugin : CordovaPlugin() {
 				
 				// The purchase have been completed with some result
 				PaymentResult.PurchaseResult -> {
-					val success = false
+					var success = false
 					
 					/*
 					Possible values of the finishCode:
@@ -632,10 +639,10 @@ class RuStorePlugin : CordovaPlugin() {
 	RuStoreBillingClient.purchases.deletePurchase(purchaseId)
 	.addOnCompleteListener(object: OnCompleteListener<DeletePurchaseResponse> {
 		override fun onSuccess(result: DeletePurchaseResponse) {
-			val response = new JSONObject()
+			val response = JSONObject()
 			
 			result.meta?.let {
-				val meta = new JSONObject()
+				val meta = JSONObject()
 				meta.put("traceId", result.meta.traceId)
 				response.put("meta", meta)
 			}
@@ -679,10 +686,10 @@ class RuStorePlugin : CordovaPlugin() {
 	RuStoreBillingClient.purchases.confirmPurchase(purchaseId, developerPayload)
 	.addOnCompleteListener(object: OnCompleteListener<ConfirmPurchaseResponse> {
 		override fun onSuccess(result: ConfirmPurchaseResponse) {
-			val response = new JSONObject()
+			val response = JSONObject()
 			
 			result.meta?.let {
-				val meta = new JSONObject()
+				val meta = JSONObject()
 				meta.put("traceId", result.meta.traceId)
 				response.put("meta", meta)
 			}
