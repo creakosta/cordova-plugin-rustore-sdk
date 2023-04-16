@@ -28,16 +28,16 @@ import ru.rustore.sdk.billingclient.model.purchase.PurchaseState
 import ru.rustore.sdk.billingclient.model.purchase.PaymentFinishCode
 
 import ru.rustore.sdk.billingclient.model.product.ProductsResponse
-import ru.rustore.sdk.billingclient.model.purchase.PurchasesResponse // TODO
-import ru.rustore.sdk.billingclient.model.purchase.DeletePurchaseResponse // TODO
-import ru.rustore.sdk.billingclient.model.purchase.ConfirmPurchaseResponse // TODO
+import ru.rustore.sdk.billingclient.model.product.PurchasesResponse // TODO
+import ru.rustore.sdk.billingclient.model.product.DeletePurchaseResponse // TODO
+import ru.rustore.sdk.billingclient.model.product.ConfirmPurchaseResponse // TODO
 
 class RuStorePlugin : CordovaPlugin() {
   lateinit var app: Application
   
   lateinit var reviewManager: RuStoreReviewManager
   
-  lateinit var userPurchases: List<Purchase>?
+  var userPurchases: List<Purchase>? = null
   
   /**
   * Called when initializing the plugin
@@ -117,7 +117,7 @@ class RuStorePlugin : CordovaPlugin() {
   override fun onCreate(savedInstanceState: Bundle?) {
 	super.onCreate(savedInstanceState)
 	if(savedInstanceState == null)
-		RuStoreBillingClient.onNewIntent(intent)
+		RuStoreBillingClient.onNewIntent(intent) // TODO: wut?
   }
   
   /**
@@ -193,10 +193,10 @@ class RuStorePlugin : CordovaPlugin() {
 	  .addOnCompleteListener(object: OnCompleteListener<FeatureAvailabilityResult> {
 		  override fun onSuccess(result: FeatureAvailabilityResult) {
 			  when(result) {
-				  FeatureAvailabilityResult.Available -> {
+				  is FeatureAvailabilityResult.Available -> {
 					  callbackContext.success("Purchases availability check: Available")
 				  }
-				  FeatureAvailabilityResult.Unavailable -> { // TODO: RuStoreException
+				  is FeatureAvailabilityResult.Unavailable -> { // TODO: RuStoreException
 					  callbackContext.error("Purchases availability check: Unavailable")
 				  }
 			  }
@@ -241,13 +241,13 @@ class RuStorePlugin : CordovaPlugin() {
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
 					when(it.productType?) {
-						ProductType.CONSUMABLE -> {
+						is ProductType.CONSUMABLE -> {
 							product.put("productType", "CONSUMABLE")
 						}
-						ProductType.NON_CONSUMABLE -> {
+						is ProductType.NON_CONSUMABLE -> {
 							product.put("productType", "NON-CONSUMABLE")
 						}
-						ProductType.SUBSCRIPTION -> {
+						is ProductType.SUBSCRIPTION -> {
 							product.put("productType", "SUBSCRIPTION")
 						}
 					}
@@ -371,7 +371,10 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			var purchases = JSONArray()
 			val purchase = JSONObject()
-			result.purchases.forEach {
+			
+			// TODO: purchases can be null here
+			
+			result.purchases?.forEach {
 				it.purchaseId?.let {
 					purchase.put("purchaseId", it.purchaseId?)
 				}
@@ -384,13 +387,13 @@ class RuStorePlugin : CordovaPlugin() {
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
 					when(it.productType?) {
-						ProductType.CONSUMABLE -> {
+						is ProductType.CONSUMABLE -> {
 							purchase.put("productType", "CONSUMABLE")
 						}
-						ProductType.NON_CONSUMABLE -> {
+						is ProductType.NON_CONSUMABLE -> {
 							purchase.put("productType", "NON-CONSUMABLE")
 						}
-						ProductType.SUBSCRIPTION -> {
+						is ProductType.SUBSCRIPTION -> {
 							purchase.put("productType", "SUBSCRIPTION")
 						}
 					}
@@ -467,7 +470,7 @@ class RuStorePlugin : CordovaPlugin() {
 	
 	val productId = args.getString(0)
 	val orderId = args.isNull(1) ? null : args.getString(1)
-	val quantity = args.isNull(2) ? null : args.getInt(2)
+	val quantity = args.isNull(2) ? 1 : args.getInt(2)
 	val developerPayload = args.isNull(3) ? null : args.getInt(3)
 	
 	if(productId.isEmpty())
@@ -479,7 +482,7 @@ class RuStorePlugin : CordovaPlugin() {
 			val response = JSONObject()
 			when(result) {
 				// The purchase have not been completed
-				PaymentResult.InvoiceResult -> {
+				is PaymentResult.InvoiceResult -> {
 					var success = false
 					
 					response.put("invoiceId", result.invoiceId)
@@ -523,12 +526,12 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				// The purchase have been completed without the invoice specified (probably they were launched with incorrect one, like an empty string)
-				PaymentResult.InvalidInvoice -> {
+				is PaymentResult.InvalidInvoice -> {
 					callbackContext.error("Failed to purchase the product - invalid invoice provided!" + result.invoiceId ? " (" + result.invoiceId + ")" : "")
 				}
 				
 				// The purchase have been completed with some result
-				PaymentResult.PurchaseResult -> {
+				is PaymentResult.PurchaseResult -> {
 					var success = false
 					
 					/*
@@ -585,37 +588,37 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				// An error happened during the purchase
-				PaymentResult.InvalidPurchase -> {
+				is PaymentResult.InvalidPurchase -> {
 					result.purchaseId?.let {
-						response.put("purchaseId", result.purchaseId?)
-						deletePurchase(it) // TODO: result.purchaseId?
+						response.put("purchaseId", result.purchaseId)
+						deletePurchase(it, callbackContext) // TODO: result.purchaseId?
 					}
 					
 					result.invoiceId?.let {
-						response.put("invoiceId", result.invoiceId?)
+						response.put("invoiceId", result.invoiceId)
 					}
 					
 					result.orderId?.let {
-						response.put("orderId", result.orderId?)
+						response.put("orderId", result.orderId)
 					}
 					
 					result.quantity?.let {
-						response.put("quantity", result.quantity?)
+						response.put("quantity", result.quantity)
 					}
 					
 					result.productId?.let {
-						response.put("productId", result.productId?)
+						response.put("productId", result.productId)
 					}
 					
 					result.errorCode?.let {
-						response.put("errorCode", result.errorCode?)
+						response.put("errorCode", result.errorCode)
 					}
 					
 					callbackContext.error(response)
 				}
 				
 				// No payment state received during the payment
-				PaymentResult.InvalidPaymentState -> {
+				is PaymentResult.InvalidPaymentState -> {
 					callbackContext.error("Failed to purcase the product - No payment state received during the payment process!")
 				}
 			}
