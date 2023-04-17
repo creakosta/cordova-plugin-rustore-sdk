@@ -50,8 +50,8 @@ class RuStorePlugin : CordovaPlugin() {
 	
 	this.app = this.cordova.getActivity().getApplication()
 	
-	var context = this.cordova.getActivity().getContext()
-	this.reviewManager = RuStoreReviewManagerFactory.Create(context) // TODO: context of what?
+	var context = this.cordova.getContext() //this.cordova.getActivity().getContext() // TODO
+	this.reviewManager = RuStoreReviewManagerFactory.create(context) // TODO: context of what?
   }
   
   /**
@@ -103,24 +103,6 @@ class RuStorePlugin : CordovaPlugin() {
 	//}
 
     return false
-  }
-  
-  /**
-  * Called when the activity is starting (= becoming visible to the user)
-  */
-  //override fun onCreate() {
-	//super.onCreate()
-  //}
-  
-  /**
-  * Called when the activity is starting (= becoming visible to the user)
-  *
-  * @param savedInstanceState A bundle filled with saved state (if present)
-  */
-  override fun onCreate(savedInstanceState: Bundle?) {
-	super.onCreate(savedInstanceState)
-	if(savedInstanceState == null)
-		RuStoreBillingClient.onNewIntent(intent) // TODO: wut?
   }
   
   /**
@@ -230,12 +212,14 @@ class RuStorePlugin : CordovaPlugin() {
 	  .addOnCompleteListener(object: OnCompleteListener<ProductsResponse> {
 		  override fun onSuccess(result: ProductsResponse) {
 			  if(result.products == null) {
-				callbackContext.error("Failed to load the products list!" + result.errorMessage ? " (Code " + result.code + " : " + result.errorMessage + result.errorDescription ? " - " + result.errorDescription : "" + ")" : "")
+				callbackContext.error("Failed to load the products list!" + (if (result.errorMessage != null) " (Code ${result.code} : ${result.errorMessage}" + (if (result.errorDescription != null) " - ${result.errorDescription}" else "") + ")" else ""))
 			}
 			
 			var products = JSONArray()
 			val product = JSONObject()
-			result.products.forEach {
+			
+			// TODO: products can be null?
+			result.products?.forEach {
 				product.put("productId", it.productId)
 				
 				it.productType?.let {
@@ -243,7 +227,7 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it.productType?) {
+					when(it.productType) {
 						is ProductType.CONSUMABLE -> {
 							product.put("productType", "CONSUMABLE")
 						}
@@ -530,7 +514,10 @@ class RuStorePlugin : CordovaPlugin() {
 				
 				// The purchase have been completed without the invoice specified (probably they were launched with incorrect one, like an empty string)
 				is PaymentResult.InvalidInvoice -> {
-					callbackContext.error("Failed to purchase the product - invalid invoice provided!" + result.invoiceId ? " (" + result.invoiceId + ")" : "")
+					var message = "Failed to purchase the product - invalid invoice provided!"
+					if(result.invoiceId != null)
+						message.plus(" (${result.invoiceId})")
+					callbackContext.error(message)
 				}
 				
 				// The purchase have been completed with some result
@@ -556,23 +543,23 @@ class RuStorePlugin : CordovaPlugin() {
 						}
 						PaymentFinishCode.CLOSED_BY_USER -> {
 							response.put("finishCode", "CLOSED_BY_USER")
-							deletePurchase(result.purchaseId)
+							RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 						}
 						PaymentFinishCode.UNHANDLED_FORM_ERROR -> {
 							response.put("finishCode", "UNHANDLED_FORM_ERROR")
-							deletePurchase(result.purchaseId)
+							RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 						}
 						PaymentFinishCode.PAYMENT_TIMEOUT -> {
 							response.put("finishCode", "PAYMENT_TIMEOUT")
-							deletePurchase(result.purchaseId)
+							RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 						}
 						PaymentFinishCode.DECLINED_BY_SERVER -> {
 							response.put("finishCode", "DECLINED_BY_SERVER")
-							deletePurchase(result.purchaseId)
+							RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 						}
 						PaymentFinishCode.RESULT_UNKNOWN -> {
 							response.put("finishCode", "RESULT_UNKNOWN")
-							deletePurchase(result.purchaseId)
+							RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 						}
 					}
 					
@@ -594,7 +581,7 @@ class RuStorePlugin : CordovaPlugin() {
 				is PaymentResult.InvalidPurchase -> {
 					result.purchaseId?.let {
 						response.put("purchaseId", result.purchaseId)
-						deletePurchase(it, callbackContext) // TODO: result.purchaseId?
+						RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
 					}
 					
 					result.invoiceId?.let {
@@ -701,7 +688,7 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.meta?.let {
 				val meta = JSONObject()
-				meta.put("traceId", result.meta.traceId)
+				meta.put("traceId", result.meta?.traceId)
 				response.put("meta", meta)
 			}
 			
