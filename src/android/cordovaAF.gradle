@@ -1,10 +1,13 @@
 repositories {
+    google()
+    mavenCentral()
     maven {
 	url 'https://artifactory-external.vkpartner.ru/artifactory/maven'
     }
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'ru.rustore.sdk:review:0.1.4'
     implementation 'ru.rustore.sdk:billingclient:0.1.7'
 }
