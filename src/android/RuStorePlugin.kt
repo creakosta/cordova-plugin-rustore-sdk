@@ -17,20 +17,23 @@ import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult
 
 import ru.vk.store.sdk.review.RuStoreReviewManager
 import ru.vk.store.sdk.review.RuStoreReviewManagerFactory
+
 import ru.vk.store.sdk.review.model.ReviewInfo
 
 import ru.rustore.sdk.billingclient.RuStoreBillingClient
+
 import ru.rustore.sdk.billingclient.model.product.Product
 import ru.rustore.sdk.billingclient.model.product.ProductType
+import ru.rustore.sdk.billingclient.model.product.ProductsResponse
+
 import ru.rustore.sdk.billingclient.model.purchase.Purchase
 import ru.rustore.sdk.billingclient.model.purchase.PaymentResult
 import ru.rustore.sdk.billingclient.model.purchase.PurchaseState
 import ru.rustore.sdk.billingclient.model.purchase.PaymentFinishCode
 
-import ru.rustore.sdk.billingclient.model.product.ProductsResponse
-import ru.rustore.sdk.billingclient.model.product.PurchasesResponse // TODO
-import ru.rustore.sdk.billingclient.model.product.DeletePurchaseResponse // TODO
-import ru.rustore.sdk.billingclient.model.product.ConfirmPurchaseResponse // TODO
+import ru.rustore.sdk.billingclient.model.purchase.response.PurchasesResponse
+import ru.rustore.sdk.billingclient.model.purchase.response.DeletePurchaseResponse
+import ru.rustore.sdk.billingclient.model.purchase.response.ConfirmPurchaseResponse
 
 class RuStorePlugin : CordovaPlugin() {
   lateinit var app: Application
