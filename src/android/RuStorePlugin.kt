@@ -388,9 +388,10 @@ class RuStorePlugin : CordovaPlugin() {
 					purchase.put("language", it)
 				}
 				
-				it.purchaseTime?.let {
-					purchase.put("purchaseTime", it.toDateString()) // TODO: it.toUTCString()/toJSON()
-				}
+				// TODO
+				//it.purchaseTime?.let {
+					//purchase.put("purchaseTime", it.toDateString()) // TODO: it.toUTCString()/toJSON()
+				//}
 				
 				it.orderId?.let {
 					purchase.put("orderId", it)
