@@ -141,7 +141,7 @@ class RuStorePlugin : CordovaPlugin() {
 				  
 				  override fun onFailure(throwable: Throwable) {
 					  // Review flow has finished, continue the app flow
-					  callbackContext.error()
+					  callbackContext.error("Failed to open the review form! (" + throwable.toString() + ")")
 				  }
 			  })
 		  }
@@ -243,27 +243,27 @@ class RuStorePlugin : CordovaPlugin() {
 				//product.put("productStatus", it.productStatus) // ProductStatus // TODO
 				
 				it.priceLabel?.let {
-					product.put("priceLabel", it.priceLabel?)
+					product.put("priceLabel", it.priceLabel)
 				}
 				
 				it.price?.let {
-					product.put("price", it.price?)
+					product.put("price", it.price)
 				}
 				
 				it.currency?.let {
-					product.put("currency", it.currency?)
+					product.put("currency", it.currency)
 				}
 				
 				it.language?.let {
-					product.put("language", it.language?)
+					product.put("language", it.language)
 				}
 				
 				it.title?.let {
-					product.put("title", it.title?)
+					product.put("title", it.title)
 				}
 				
 				it.description?.let {
-					product.put("description", it.description?)
+					product.put("description", it.description)
 				}
 				
 				it.imageUrl?.let {
@@ -302,11 +302,11 @@ class RuStorePlugin : CordovaPlugin() {
 					}
 					
 					it.subscription?.introductoryPrice?.let {
-						sub.put("introductoryPrice", it.subscription?.introductoryPrice?)
+						sub.put("introductoryPrice", it.subscription?.introductoryPrice)
 					}
 					
 					it.subscription?.introductoryPriceAmount?.let {
-						sub.put("introductoryPriceAmount", it.subscription?.introductoryPriceAmount?)
+						sub.put("introductoryPriceAmount", it.subscription?.introductoryPriceAmount)
 					}
 					
 					it.subscription?.introductoryPricePeriod?.let {
@@ -351,7 +351,7 @@ class RuStorePlugin : CordovaPlugin() {
 	.addOnCompleteListener(object: OnCompleteListener<PurchasesResponse> {
 		override fun onSuccess(result: PurchasesResponse) {
 			if(result.purchases == null) {
-				callbackContext.error("Failed to load the purchases list!" + result.errorMessage ? " (Code " + result.code + " : " + result.errorMessage + result.errorDescription ? " - " + result.errorDescription : "" + ")" : "")
+				callbackContext.error("Failed to load the purchases list!" + (if (result.errorMessage != null) " (Code ${result.code} : ${result.errorMessage}" + (if (result.errorDescription != null) " - ${result.errorDescription}" else "") + ")" else ""))
 			}
 			
 			userPurchases = result.purchases
@@ -363,7 +363,7 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.purchases?.forEach {
 				it.purchaseId?.let {
-					purchase.put("purchaseId", it.purchaseId?)
+					purchase.put("purchaseId", it.purchaseId)
 				}
 				
 				purchase.put("productId", it.productId)
@@ -373,7 +373,7 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it.productType?) {
+					when(it.productType) {
 						is ProductType.CONSUMABLE -> {
 							purchase.put("productType", "CONSUMABLE")
 						}
@@ -387,15 +387,15 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				it.invoiceId?.let {
-					purchase.put("invoiceId", it.invoiceId?)
+					purchase.put("invoiceId", it.invoiceId)
 				}
 				
 				it.description?.let {
-					purchase.put("description", it.description?)
+					purchase.put("description", it.description)
 				}
 				
 				it.language?.let {
-					purchase.put("language", it.language?)
+					purchase.put("language", it.language)
 				}
 				
 				it.purchaseTime?.let {
@@ -403,35 +403,35 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				it.orderId?.let {
-					purchase.put("orderId", it.orderId?)
+					purchase.put("orderId", it.orderId)
 				}
 				
 				it.amountLabel?.let {
-					purchase.put("amountLabel", it.amountLabel?)
+					purchase.put("amountLabel", it.amountLabel)
 				}
 				
 				it.amount?.let {
-					purchase.put("amount", it.amount?)
+					purchase.put("amount", it.amount)
 				}
 				
 				it.currency?.let {
-					purchase.put("currency", it.currency?)
+					purchase.put("currency", it.currency)
 				}
 				
 				it.quantity?.let {
-					purchase.put("quantity", it.quantity?)
+					purchase.put("quantity", it.quantity)
 				}
 				
 				//it.purchaseState?.let {
-					//purchase.put("purchaseState", it.purchaseState?) // PurchaseState // TODO
+					//purchase.put("purchaseState", it.purchaseState) // PurchaseState // TODO
 				//}
 				
 				it.developerPayload?.let {
-					purchase.put("developerPayload", it.developerPayload?)
+					purchase.put("developerPayload", it.developerPayload)
 				}
 				
 				it.subscriptionToken?.let {
-					purchase.put("subscriptionToken", it.subscriptionToken?)
+					purchase.put("subscriptionToken", it.subscriptionToken)
 				}
 				
 				purchases.put(purchase)
@@ -456,9 +456,9 @@ class RuStorePlugin : CordovaPlugin() {
 	// TODO: check if initialized?
 	
 	val productId = args.getString(0)
-	val orderId = args.isNull(1) ? null : args.getString(1)
-	val quantity = args.isNull(2) ? 1 : args.getInt(2)
-	val developerPayload = args.isNull(3) ? null : args.getInt(3)
+	val orderId = if (args.isNull(1)) null else args.getString(1)
+	val quantity = if (args.isNull(2)) 1 else args.getInt(2)
+	val developerPayload = if (args.isNull(3)) null else args.getInt(3)
 	
 	if(productId.isEmpty())
 		callbackContext.error("Empty product ID provided!")
@@ -537,7 +537,7 @@ class RuStorePlugin : CordovaPlugin() {
 					when(result.finishCode) {
 						PaymentFinishCode.SUCCESSFUL_PAYMENT -> {
 							response.put("finishCode", "SUCCESSFUL_PAYMENT")
-							if(userPurchases.get(userPurchases.indexOf(productId)).productType == ProductType.CONSUMABLE)
+							if(userPurchases?.get(userPurchases?.indexOf(productId)).productType == ProductType.CONSUMABLE)
 								RuStoreBillingClient.purchases.confirmPurchase(result.purchaseId)
 							success = true
 						}
@@ -676,7 +676,7 @@ class RuStorePlugin : CordovaPlugin() {
 	// TODO: check if initialized?
 	
 	val purchaseId = args.getString(0)
-	val developerPayload = args.isNull(1) ? null : args.getString(1)
+	val developerPayload = if (args.isNull(1)) null else args.getString(1)
 	
 	if(purchaseId.isEmpty())
 		callbackContext.error("Empty purchase ID provided!")
