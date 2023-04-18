@@ -227,7 +227,7 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it.productType) {
+					when(it) {
 						is ProductType.CONSUMABLE -> {
 							product.put("productType", "CONSUMABLE")
 						}
@@ -243,77 +243,77 @@ class RuStorePlugin : CordovaPlugin() {
 				//product.put("productStatus", it.productStatus) // ProductStatus // TODO
 				
 				it.priceLabel?.let {
-					product.put("priceLabel", it.priceLabel)
+					product.put("priceLabel", it)
 				}
 				
 				it.price?.let {
-					product.put("price", it.price)
+					product.put("price", it)
 				}
 				
 				it.currency?.let {
-					product.put("currency", it.currency)
+					product.put("currency", it)
 				}
 				
 				it.language?.let {
-					product.put("language", it.language)
+					product.put("language", it)
 				}
 				
 				it.title?.let {
-					product.put("title", it.title)
+					product.put("title", it)
 				}
 				
 				it.description?.let {
-					product.put("description", it.description)
+					product.put("description", it)
 				}
 				
 				it.imageUrl?.let {
-					product.put("imageUrl", it.imageUrl?.toString())
+					product.put("imageUrl", it.toString())
 				}
 				
 				it.promoImageUrl?.let {
-					product.put("promoImageUrl", it.promoImageUrl?.toString())
+					product.put("promoImageUrl", it.toString())
 				}
 				
 				it.subscription?.let {
 					val sub = JSONObject()
 					
-					it.subscription?.subscriptionPeriod?.let {
+					it.subscriptionPeriod?.let {
 						val period = JSONObject()
-						period.put("years", it.subscription?.subscriptionPeriod?.years)
-						period.put("months", it.subscription?.subscriptionPeriod?.months)
-						period.put("days", it.subscription?.subscriptionPeriod?.days)
+						period.put("years", it.years)
+						period.put("months", it.months)
+						period.put("days", it.days)
 						sub.put("subscriptionPeriod", period)
 					}
 					
-					it.subscription?.freeTrialPeriod?.let {
+					it.freeTrialPeriod?.let {
 						val period = JSONObject()
-						period.put("years", it.subscription?.freeTrialPeriod?.years)
-						period.put("months", it.subscription?.freeTrialPeriod?.months)
-						period.put("days", it.subscription?.freeTrialPeriod?.days)
+						period.put("years", it.years)
+						period.put("months", it.months)
+						period.put("days", it.days)
 						sub.put("freeTrialPeriod", period)
 					}
 					
-					it.subscription?.gracePeriod?.let {
+					it.gracePeriod?.let {
 						val period = JSONObject()
-						period.put("years", it.subscription?.gracePeriod?.years)
-						period.put("months", it.subscription?.gracePeriod?.months)
-						period.put("days", it.subscription?.gracePeriod?.days)
+						period.put("years", it.years)
+						period.put("months", it.months)
+						period.put("days", it.days)
 						sub.put("gracePeriod", period)
 					}
 					
-					it.subscription?.introductoryPrice?.let {
-						sub.put("introductoryPrice", it.subscription?.introductoryPrice)
+					it.introductoryPrice?.let {
+						sub.put("introductoryPrice", it)
 					}
 					
-					it.subscription?.introductoryPriceAmount?.let {
-						sub.put("introductoryPriceAmount", it.subscription?.introductoryPriceAmount)
+					it.introductoryPriceAmount?.let {
+						sub.put("introductoryPriceAmount", it)
 					}
 					
-					it.subscription?.introductoryPricePeriod?.let {
+					it.introductoryPricePeriod?.let {
 						val period = JSONObject()
-						period.put("years", it.subscription?.introductoryPricePeriod?.years)
-						period.put("months", it.subscription?.introductoryPricePeriod?.months)
-						period.put("days", it.subscription?.introductoryPricePeriod?.days)
+						period.put("years", it.years)
+						period.put("months", it.months)
+						period.put("days", it.days)
 						sub.put("introductoryPricePeriod", period)
 					}
 					
@@ -363,7 +363,7 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.purchases?.forEach {
 				it.purchaseId?.let {
-					purchase.put("purchaseId", it.purchaseId)
+					purchase.put("purchaseId", it)
 				}
 				
 				purchase.put("productId", it.productId)
@@ -373,7 +373,7 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it.productType) {
+					when(it) {
 						is ProductType.CONSUMABLE -> {
 							purchase.put("productType", "CONSUMABLE")
 						}
@@ -387,39 +387,39 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				it.invoiceId?.let {
-					purchase.put("invoiceId", it.invoiceId)
+					purchase.put("invoiceId", it)
 				}
 				
 				it.description?.let {
-					purchase.put("description", it.description)
+					purchase.put("description", it)
 				}
 				
 				it.language?.let {
-					purchase.put("language", it.language)
+					purchase.put("language", it)
 				}
 				
 				it.purchaseTime?.let {
-					purchase.put("purchaseTime", it.purchaseTime?.toUTCString())
+					purchase.put("purchaseTime", it.toUTCString())
 				}
 				
 				it.orderId?.let {
-					purchase.put("orderId", it.orderId)
+					purchase.put("orderId", it)
 				}
 				
 				it.amountLabel?.let {
-					purchase.put("amountLabel", it.amountLabel)
+					purchase.put("amountLabel", it)
 				}
 				
 				it.amount?.let {
-					purchase.put("amount", it.amount)
+					purchase.put("amount", it)
 				}
 				
 				it.currency?.let {
-					purchase.put("currency", it.currency)
+					purchase.put("currency", it)
 				}
 				
 				it.quantity?.let {
-					purchase.put("quantity", it.quantity)
+					purchase.put("quantity", it)
 				}
 				
 				//it.purchaseState?.let {
@@ -427,11 +427,11 @@ class RuStorePlugin : CordovaPlugin() {
 				//}
 				
 				it.developerPayload?.let {
-					purchase.put("developerPayload", it.developerPayload)
+					purchase.put("developerPayload", it)
 				}
 				
 				it.subscriptionToken?.let {
-					purchase.put("subscriptionToken", it.subscriptionToken)
+					purchase.put("subscriptionToken", it)
 				}
 				
 				purchases.put(purchase)
@@ -458,7 +458,7 @@ class RuStorePlugin : CordovaPlugin() {
 	val productId = args.getString(0)
 	val orderId = if (args.isNull(1)) null else args.getString(1)
 	val quantity = if (args.isNull(2)) 1 else args.getInt(2)
-	val developerPayload = if (args.isNull(3)) null else args.getInt(3)
+	val developerPayload = if (args.isNull(3)) null else args.getString(3)
 	
 	if(productId.isEmpty())
 		callbackContext.error("Empty product ID provided!")
@@ -641,7 +641,7 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.meta?.let {
 				val meta = JSONObject()
-				meta.put("traceId", result.meta.traceId)
+				meta.put("traceId", result.meta?.traceId)
 				response.put("meta", meta)
 			}
 			
