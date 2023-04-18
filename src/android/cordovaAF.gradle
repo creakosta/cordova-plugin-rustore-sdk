@@ -6,6 +6,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'ru.rustore.sdk:review:0.1.4'
-    implementation 'ru.rustore.sdk:billingclient:0.1.7'
+    implementation 'ru.rustore.sdk:review:0.1.5'
+    implementation 'ru.rustore.sdk:billingclient:0.1.8'
 }
