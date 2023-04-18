@@ -227,17 +227,12 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it) {
-						is ProductType.CONSUMABLE -> {
-							product.put("productType", "CONSUMABLE")
-						}
-						is ProductType.NON_CONSUMABLE -> {
-							product.put("productType", "NON-CONSUMABLE")
-						}
-						is ProductType.SUBSCRIPTION -> {
-							product.put("productType", "SUBSCRIPTION")
-						}
+					val type = when(it) {
+						ProductType.CONSUMABLE -> "CONSUMABLE"
+						ProductType.NON_CONSUMABLE -> "NON-CONSUMABLE"
+						ProductType.SUBSCRIPTION -> "SUBSCRIPTION"
 					}
+					product.put("productType", type)
 				}
 				
 				//product.put("productStatus", it.productStatus) // ProductStatus // TODO
@@ -373,17 +368,12 @@ class RuStorePlugin : CordovaPlugin() {
 					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
 					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
 					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					when(it) {
-						is ProductType.CONSUMABLE -> {
-							purchase.put("productType", "CONSUMABLE")
-						}
-						is ProductType.NON_CONSUMABLE -> {
-							purchase.put("productType", "NON-CONSUMABLE")
-						}
-						is ProductType.SUBSCRIPTION -> {
-							purchase.put("productType", "SUBSCRIPTION")
-						}
+					val type = when(it) {
+						ProductType.CONSUMABLE -> "CONSUMABLE"
+						ProductType.NON_CONSUMABLE -> "NON-CONSUMABLE"
+						ProductType.SUBSCRIPTION -> "SUBSCRIPTION"
 					}
+					purchase.put("productType", type)
 				}
 				
 				it.invoiceId?.let {
@@ -399,7 +389,7 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				it.purchaseTime?.let {
-					purchase.put("purchaseTime", it.toUTCString())
+					purchase.put("purchaseTime", it.toDateString()) // TODO: it.toUTCString()/toJSON()
 				}
 				
 				it.orderId?.let {
@@ -423,7 +413,7 @@ class RuStorePlugin : CordovaPlugin() {
 				}
 				
 				//it.purchaseState?.let {
-					//purchase.put("purchaseState", it.purchaseState) // PurchaseState // TODO
+					//purchase.put("purchaseState", it) // PurchaseState // TODO
 				//}
 				
 				it.developerPayload?.let {
@@ -537,7 +527,7 @@ class RuStorePlugin : CordovaPlugin() {
 					when(result.finishCode) {
 						PaymentFinishCode.SUCCESSFUL_PAYMENT -> {
 							response.put("finishCode", "SUCCESSFUL_PAYMENT")
-							if(userPurchases?.get(userPurchases?.indexOf(productId)).productType == ProductType.CONSUMABLE)
+							if(userPurchases?.find({it.productId == productId})?.productType == ProductType.CONSUMABLE)
 								RuStoreBillingClient.purchases.confirmPurchase(result.purchaseId)
 							success = true
 						}
@@ -568,7 +558,7 @@ class RuStorePlugin : CordovaPlugin() {
 					response.put("productId", result.productId)
 					
 					result.subscriptionToken?.let {
-						response.put("subscriptionToken", result.subscriptionToken)
+						response.put("subscriptionToken", it)
 					}
 					
 					if(success)
@@ -580,28 +570,28 @@ class RuStorePlugin : CordovaPlugin() {
 				// An error happened during the purchase
 				is PaymentResult.InvalidPurchase -> {
 					result.purchaseId?.let {
-						response.put("purchaseId", result.purchaseId)
-						RuStoreBillingClient.purchases.deletePurchase(result.purchaseId)
+						response.put("purchaseId", it)
+						RuStoreBillingClient.purchases.deletePurchase(it)
 					}
 					
 					result.invoiceId?.let {
-						response.put("invoiceId", result.invoiceId)
+						response.put("invoiceId", it)
 					}
 					
 					result.orderId?.let {
-						response.put("orderId", result.orderId)
+						response.put("orderId", it)
 					}
 					
 					result.quantity?.let {
-						response.put("quantity", result.quantity)
+						response.put("quantity", it)
 					}
 					
 					result.productId?.let {
-						response.put("productId", result.productId)
+						response.put("productId", it)
 					}
 					
 					result.errorCode?.let {
-						response.put("errorCode", result.errorCode)
+						response.put("errorCode", it)
 					}
 					
 					callbackContext.error(response)
@@ -609,7 +599,7 @@ class RuStorePlugin : CordovaPlugin() {
 				
 				// No payment state received during the payment
 				is PaymentResult.InvalidPaymentState -> {
-					callbackContext.error("Failed to purcase the product - No payment state received during the payment process!")
+					callbackContext.error("Failed to purchase the product - No payment state received during the payment process!")
 				}
 			}
 		}
@@ -641,18 +631,18 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.meta?.let {
 				val meta = JSONObject()
-				meta.put("traceId", result.meta?.traceId)
+				meta.put("traceId", it.traceId)
 				response.put("meta", meta)
 			}
 			
 			response.put("code", result.code)
 			
 			result.errorMessage?.let {
-				response.put("errorMessage", result.errorMessage)
+				response.put("errorMessage", it)
 			}
 			
 			result.errorDescription?.let {
-				response.put("errorDescription", result.errorDescription)
+				response.put("errorDescription", it)
 			}
 			
 			// TODO: errors field support?
@@ -688,18 +678,18 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			result.meta?.let {
 				val meta = JSONObject()
-				meta.put("traceId", result.meta?.traceId)
+				meta.put("traceId", it.traceId)
 				response.put("meta", meta)
 			}
 			
 			response.put("code", result.code)
 			
 			result.errorMessage?.let {
-				response.put("errorMessage", result.errorMessage)
+				response.put("errorMessage", it)
 			}
 			
 			result.errorDescription?.let {
-				response.put("errorDescription", result.errorDescription)
+				response.put("errorDescription", it)
 			}
 			
 			// TODO: errors field support?
