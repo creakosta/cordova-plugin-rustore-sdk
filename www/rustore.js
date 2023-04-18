@@ -20,7 +20,7 @@ var argscheck = require('cordova/argscheck');
 	 * @param onError A callback that will be called if there's some error
 	 */
 	RuStore.prototype.initPurchases = function (options, onSuccess, onError) {
-		argscheck.checkArgs('O', 'RuStore.initPurchases', purchases)
+		///argscheck.checkArgs('O', 'RuStore.initPurchases', purchases)
 		
 		if(!options) {
 			if(onError) {
