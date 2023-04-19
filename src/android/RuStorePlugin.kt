@@ -160,10 +160,12 @@ class RuStorePlugin : CordovaPlugin() {
   * @param callbackContext The callback context used when calling back into JS code
   */
   private fun initBillingClient(args: JSONArray, callbackContext: CallbackContext) { // TODO: initSdk? initPurchases?
+	val options = args.getJSONObject(0)
+	
 	RuStoreBillingClient.init(
 		application = this.app,
-		consoleApplicationId = args.getString(0),
-		deeplinkScheme = args.getString(1)
+		consoleApplicationId = options.getString('consoleApplicationId'),
+		deeplinkScheme = options.getString('deeplinkScheme')
 	)
 	callbackContext.success()
   }
