@@ -164,8 +164,8 @@ class RuStorePlugin : CordovaPlugin() {
 	
 	RuStoreBillingClient.init(
 		application = this.app,
-		consoleApplicationId = options.getString('consoleApplicationId'),
-		deeplinkScheme = options.getString('deeplinkScheme')
+		consoleApplicationId = options.getString("consoleApplicationId"),
+		deeplinkScheme = options.getString("deeplinkScheme")
 	)
 	callbackContext.success()
   }
