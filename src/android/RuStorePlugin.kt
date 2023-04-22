@@ -218,10 +218,11 @@ class RuStorePlugin : CordovaPlugin() {
 			}
 			
 			var products = JSONArray()
-			val product = JSONObject()
 			
 			// TODO: products can be null?
 			result.products?.forEach {
+				val product = JSONObject()
+				
 				product.put("productId", it.productId)
 				
 				it.productType?.let {
@@ -354,11 +355,12 @@ class RuStorePlugin : CordovaPlugin() {
 			userPurchases = result.purchases
 			
 			var purchases = JSONArray()
-			val purchase = JSONObject()
 			
 			// TODO: purchases can be null here
 			
 			result.purchases?.forEach {
+				val purchase = JSONObject()
+				
 				it.purchaseId?.let {
 					purchase.put("purchaseId", it)
 				}
