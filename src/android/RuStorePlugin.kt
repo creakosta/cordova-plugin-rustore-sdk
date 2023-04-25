@@ -207,8 +207,8 @@ class RuStorePlugin : CordovaPlugin() {
   */
   private fun getProducts(args: JSONArray, callbackContext: CallbackContext) {
 	  val productIds = if(args.length()) List<String>(args.length()) {
-		args.getString(it) else null
-	  }
+		args.getString(it)
+	  } else null
 	  
 	  RuStoreBillingClient.products.getProducts(productIds)
 	  .addOnCompleteListener(object: OnCompleteListener<ProductsResponse> {
