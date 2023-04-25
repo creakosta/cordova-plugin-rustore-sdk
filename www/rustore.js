@@ -20,7 +20,7 @@ var argscheck = require('cordova/argscheck');
 	 * @param onError A callback that will be called if there's some error
 	 */
 	RuStore.prototype.initPurchases = function (options, onSuccess, onError) {
-		///argscheck.checkArgs('O', 'RuStore.initPurchases', purchases)
+		argscheck.checkArgs('O', 'RuStore.initPurchases', arguments)
 		
 		if(!options) {
 			if(onError) {
@@ -30,10 +30,18 @@ var argscheck = require('cordova/argscheck');
 		else {
 			if(options.consoleApplicationId !== undefined && typeof options.consoleApplicationId != 'string') {
 				if(onError) {
+					onError("Invalid console application ID provided!")
+				}
+			else if(options.consoleApplicationId === undefined || options.consoleApplicationId === "") {
+				if(onError) {
 					onError("No console application ID provided!")
 				}
 			}
 			else if(options.deeplinkScheme !== undefined && typeof options.deeplinkScheme != 'string') {
+				if(onError) {
+					onError("Invalid deeplink scheme provided!")
+				}
+			else if(options.deeplinkScheme === undefined || options.deeplinkScheme === "") {
 				if(onError) {
 					onError("No deeplink scheme provided!")
 				}
@@ -58,8 +66,9 @@ var argscheck = require('cordova/argscheck');
 	 * @param onSuccess A callback that will be called if all went ok (and the products list will be accessible through here)
 	 * @param onError A callback that will be called if there's some error
 	 */
-	RuStore.prototype.getProducts = function (onSuccess, onError) {
-		exec(onSuccess, onError, 'RuStorePlugin', 'getProducts', [])
+	RuStore.prototype.getProducts = function (productIds, onSuccess, onError) {
+		// TODO: argscheck?
+		exec(onSuccess, onError, 'RuStorePlugin', 'getProducts', [productIds])
 	}
 	
 	/**
