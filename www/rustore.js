@@ -32,6 +32,7 @@ var argscheck = require('cordova/argscheck');
 				if(onError) {
 					onError("Invalid console application ID provided!")
 				}
+			}
 			else if(options.consoleApplicationId === undefined || options.consoleApplicationId === "") {
 				if(onError) {
 					onError("No console application ID provided!")
@@ -41,6 +42,7 @@ var argscheck = require('cordova/argscheck');
 				if(onError) {
 					onError("Invalid deeplink scheme provided!")
 				}
+			}
 			else if(options.deeplinkScheme === undefined || options.deeplinkScheme === "") {
 				if(onError) {
 					onError("No deeplink scheme provided!")
