@@ -365,11 +365,11 @@ class RuStorePlugin : CordovaPlugin() {
 					if (purchaseId != null) {
 						when(it.purchaseState) {
 							PurchaseState.CREATED, PurchaseState.INVOICE_CREATED -> {
-								RuStoreBillingClient.purchases.deletePurchase(purchaseId).await()
+								RuStoreBillingClient.purchases.deletePurchase(purchaseId)
 								//continue
 							}
 							PurchaseState.PAID -> {
-								RuStoreBillingClient.purchases.confirmPurchase(purchaseId).await()
+								RuStoreBillingClient.purchases.confirmPurchase(purchaseId)
 							}
 							else -> Unit
 						}
