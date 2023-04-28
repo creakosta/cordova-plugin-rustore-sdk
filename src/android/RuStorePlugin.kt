@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.content.Intent
 import android.app.Application
 
-//import ru.rustore.sdk.core.tasks.Task
 import ru.rustore.sdk.core.tasks.OnCompleteListener
 import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult
 
@@ -50,8 +49,8 @@ class RuStorePlugin : CordovaPlugin() {
 	
 	this.app = this.cordova.getActivity().getApplication()
 	
-	var context = this.cordova.getContext() //this.cordova.getActivity().getContext() // TODO
-	this.reviewManager = RuStoreReviewManagerFactory.create(context) // TODO: context of what?
+	var context = this.cordova.getContext()
+	this.reviewManager = RuStoreReviewManagerFactory.create(context)
   }
   
   /**
@@ -208,8 +207,9 @@ class RuStorePlugin : CordovaPlugin() {
   private fun getProducts(args: JSONArray, callbackContext: CallbackContext) {
 	  // TODO: check if initialized?
 	  
-	  val productIds = List<String>(args.getJSONArray(0).length()) {
-		args.getString(it)
+	  val productsArray = args.getJSONArray(0)
+	  val productIds = List<String>(productsArray.length()) {
+		productsArray.getString(it)
 	  }
 	  
 	  RuStoreBillingClient.products.getProducts(productIds)
@@ -240,7 +240,11 @@ class RuStorePlugin : CordovaPlugin() {
 					product.put("productType", type)
 				}
 				
-				//product.put("productStatus", it.productStatus) // ProductStatus // TODO
+				val status = when(it.productStatus) {
+					ProductStatus.ACTIVE -> "ACTIVE"
+					ProductStatus.INACTIVE -> "INACTIVE"
+				}
+				product.put("productStatus", status)
 				
 				it.priceLabel?.let {
 					product.put("priceLabel", it)
@@ -340,13 +344,6 @@ class RuStorePlugin : CordovaPlugin() {
   private fun getPurchases(args: JSONArray, callbackContext: CallbackContext) {
 	// TODO: check if initialized?
 	
-	// TODO: no args
-	
-	//val purchaseId = args.getString(0)
-	
-	//if(purchaseId.isEmpty())
-		//callbackContext.error("Empty purchase ID provided!")
-	
 	RuStoreBillingClient.purchases.getPurchases()
 	.addOnCompleteListener(object: OnCompleteListener<PurchasesResponse> {
 		override fun onSuccess(result: PurchasesResponse) {
@@ -360,80 +357,102 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			// TODO: purchases can be null here
 			
-			result.purchases?.forEach {
-				val purchase = JSONObject()
-				
-				it.purchaseId?.let {
-					purchase.put("purchaseId", it)
-				}
-				
-				purchase.put("productId", it.productId)
-				
-				it.productType?.let {
-					// Possible types:
-					// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
-					// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
-					// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
-					val type = when(it) {
-						ProductType.CONSUMABLE -> "CONSUMABLE"
-						ProductType.NON_CONSUMABLE -> "NON-CONSUMABLE"
-						ProductType.SUBSCRIPTION -> "SUBSCRIPTION"
+			result.purchases?.let {
+				//result.purchases?.forEach {
+				for (it in result.purchases) {
+					when(it.purchaseState) {
+						PurchaseState.CREATED, PurchaseState.INVOICE_CREATED -> {
+							RuStoreBillingClient.purchases.deletePurchase(it.purchaseId).await()
+							//continue
+						}
+						PurchaseState.PAID -> {
+							RuStoreBillingClient.purchases.confirmPurchase(it.purchaseId).await()
+						}
 					}
-					purchase.put("productType", type)
+					
+					val purchase = JSONObject()
+					
+					it.purchaseId?.let {
+						purchase.put("purchaseId", it)
+					}
+					
+					purchase.put("productId", it.productId)
+					
+					it.productType?.let {
+						// Possible types:
+						// CONSUMABLE - can be purchased multiple times, represents things like crystals, for example
+						// NON-CONSUMABLE - can be purchased only once, for things like ad disabling
+						// SUBSCRIPTION - can be purchased for a time period, for things like streaming service subscription
+						val type = when(it) {
+							ProductType.CONSUMABLE -> "CONSUMABLE"
+							ProductType.NON_CONSUMABLE -> "NON-CONSUMABLE"
+							ProductType.SUBSCRIPTION -> "SUBSCRIPTION"
+						}
+						purchase.put("productType", type)
+					}
+					
+					it.invoiceId?.let {
+						purchase.put("invoiceId", it)
+					}
+					
+					it.description?.let {
+						purchase.put("description", it)
+					}
+					
+					it.language?.let {
+						purchase.put("language", it)
+					}
+					
+					it.purchaseTime?.let {
+						purchase.put("purchaseTime", it.toString()) // TODO: it.toUTCString()/toJSON()/toDateString()?
+					}
+					
+					it.orderId?.let {
+						purchase.put("orderId", it)
+					}
+					
+					it.amountLabel?.let {
+						purchase.put("amountLabel", it)
+					}
+					
+					it.amount?.let {
+						purchase.put("amount", it)
+					}
+					
+					it.currency?.let {
+						purchase.put("currency", it)
+					}
+					
+					it.quantity?.let {
+						purchase.put("quantity", it)
+					}
+					
+					it.purchaseState?.let {
+						val state = when(it) {
+							PurchaseState.CREATED -> "CREATED"
+							PurchaseState.INVOICE_CREATED -> "INVOICE CREATED"
+							PurchaseState.CONFIRMED -> "CONFIRMED"
+							PurchaseState.PAID -> "PAID"
+							PurchaseState.CANCELLED -> "CANCELLED"
+							PurchaseState.CONSUMED -> "CONSUMED"
+							PurchaseState.CLOSED -> "CLOSED"
+							PurchaseState.TERMINATED -> "TERMINATED"
+						}
+						purchase.put("purchaseState", state)
+					}
+					
+					it.developerPayload?.let {
+						purchase.put("developerPayload", it)
+					}
+					
+					it.subscriptionToken?.let {
+						purchase.put("subscriptionToken", it)
+					}
+					
+					purchases.put(purchase)
 				}
-				
-				it.invoiceId?.let {
-					purchase.put("invoiceId", it)
-				}
-				
-				it.description?.let {
-					purchase.put("description", it)
-				}
-				
-				it.language?.let {
-					purchase.put("language", it)
-				}
-				
-				// TODO
-				//it.purchaseTime?.let {
-					//purchase.put("purchaseTime", it.toDateString()) // TODO: it.toUTCString()/toJSON()
-				//}
-				
-				it.orderId?.let {
-					purchase.put("orderId", it)
-				}
-				
-				it.amountLabel?.let {
-					purchase.put("amountLabel", it)
-				}
-				
-				it.amount?.let {
-					purchase.put("amount", it)
-				}
-				
-				it.currency?.let {
-					purchase.put("currency", it)
-				}
-				
-				it.quantity?.let {
-					purchase.put("quantity", it)
-				}
-				
-				//it.purchaseState?.let {
-					//purchase.put("purchaseState", it) // PurchaseState // TODO
-				//}
-				
-				it.developerPayload?.let {
-					purchase.put("developerPayload", it)
-				}
-				
-				it.subscriptionToken?.let {
-					purchase.put("subscriptionToken", it)
-				}
-				
-				purchases.put(purchase)
+				callbackContext.success(purchases)
 			}
-			callbackContext.success(purchases)
 		}
 		
 		override fun onFailure(throwable: Throwable) {
@@ -452,13 +471,16 @@ class RuStorePlugin : CordovaPlugin() {
   private fun purchaseProduct(args: JSONArray, callbackContext: CallbackContext) {
 	// TODO: check if initialized?
 	
-	val productId = args.getString(0)
-	val orderId = if (args.isNull(1)) null else args.getString(1)
-	val quantity = if (args.isNull(2)) 1 else args.getInt(2)
-	val developerPayload = if (args.isNull(3)) null else args.getString(3)
+	val data = args.getJSONObject(0)
+	
+	val productId = data.getString("productId")
 	
 	if(productId.isEmpty())
 		callbackContext.error("Empty product ID provided!")
+	
+	val orderId = if (data.has("orderId")) data.getString("orderId") else null
+	val quantity = if (data.has("quantity")) data.getInt("quantity") else 1
+	val developerPayload = if (data.has("developerPayload")) data.getString("developerPayload") else null
 	
 	RuStoreBillingClient.purchases.purchaseProduct(productId, orderId, quantity, developerPayload)
 	.addOnCompleteListener(object: OnCompleteListener<PaymentResult> {
