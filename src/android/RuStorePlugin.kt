@@ -361,13 +361,17 @@ class RuStorePlugin : CordovaPlugin() {
 			//result.purchases?.let {
 				result.purchases?.forEach {
 				//for (it in result.purchases) {
-					when(it.purchaseState) {
-						PurchaseState.CREATED, PurchaseState.INVOICE_CREATED -> {
-							RuStoreBillingClient.purchases.deletePurchase(it.purchaseId).await()
-							//continue
-						}
-						PurchaseState.PAID -> {
-							RuStoreBillingClient.purchases.confirmPurchase(it.purchaseId).await()
+					val purchaseId = it.purchaseId
+					if (purchaseId != null) {
+						when(it.purchaseState) {
+							PurchaseState.CREATED, PurchaseState.INVOICE_CREATED -> {
+								RuStoreBillingClient.purchases.deletePurchase(it.purchaseId).await()
+								//continue
+							}
+							PurchaseState.PAID -> {
+								RuStoreBillingClient.purchases.confirmPurchase(it.purchaseId).await()
+							}
+							else -> Unit
 						}
 					}
 					
