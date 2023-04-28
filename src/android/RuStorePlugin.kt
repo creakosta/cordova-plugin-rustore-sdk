@@ -23,6 +23,7 @@ import ru.rustore.sdk.billingclient.RuStoreBillingClient
 
 import ru.rustore.sdk.billingclient.model.product.Product
 import ru.rustore.sdk.billingclient.model.product.ProductType
+import ru.rustore.sdk.billingclient.model.product.ProductStatus
 import ru.rustore.sdk.billingclient.model.product.ProductsResponse
 
 import ru.rustore.sdk.billingclient.model.purchase.Purchase
@@ -357,9 +358,9 @@ class RuStorePlugin : CordovaPlugin() {
 			
 			// TODO: purchases can be null here
 			
-			result.purchases?.let {
-				//result.purchases?.forEach {
-				for (it in result.purchases) {
+			//result.purchases?.let {
+				result.purchases?.forEach {
+				//for (it in result.purchases) {
 					when(it.purchaseState) {
 						PurchaseState.CREATED, PurchaseState.INVOICE_CREATED -> {
 							RuStoreBillingClient.purchases.deletePurchase(it.purchaseId).await()
@@ -452,7 +453,7 @@ class RuStorePlugin : CordovaPlugin() {
 					purchases.put(purchase)
 				}
 				callbackContext.success(purchases)
-			}
+			//}
 		}
 		
 		override fun onFailure(throwable: Throwable) {
