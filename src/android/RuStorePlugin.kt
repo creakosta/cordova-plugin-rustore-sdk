@@ -206,14 +206,16 @@ class RuStorePlugin : CordovaPlugin() {
   * @param callbackContext The callback context used when calling back into JS code
   */
   private fun getProducts(args: JSONArray, callbackContext: CallbackContext) {
-	  val productIds = List<String>(args.length()) {
+	  // TODO: check if initialized?
+	  
+	  val productIds = List<String>(args.getJSONArray(0).length()) {
 		args.getString(it)
 	  }
 	  
 	  RuStoreBillingClient.products.getProducts(productIds)
 	  .addOnCompleteListener(object: OnCompleteListener<ProductsResponse> {
 		  override fun onSuccess(result: ProductsResponse) {
-			  if(result.products == null) {
+			if(result.products == null) {
 				callbackContext.error("Failed to load the products list!" + (if (result.errorMessage != null) " (Code ${result.code} : ${result.errorMessage}" + (if (result.errorDescription != null) " - ${result.errorDescription}" else "") + ")" else ""))
 			}
 			
