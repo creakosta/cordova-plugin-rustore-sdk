@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android" 
   xmlns:tools="http://schemas.android.com/tools"
-  id="cordova-plugin-rustore-sdk" version="0.8.0">
+  id="cordova-plugin-rustore-sdk" version="0.9.0">
 
   <name>Cordova RuStore SDK Plugin</name>
   <description>A plugin for Cordova Android which provides RuStore SDK functionality</description>
