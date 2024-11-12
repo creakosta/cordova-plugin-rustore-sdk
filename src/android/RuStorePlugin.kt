@@ -93,14 +93,14 @@ class RuStorePlugin : CordovaPlugin() {
 	  purchaseProduct(args, callbackContext)
 	  return true
 	}
-	//else if(action == "deletePurchase") {
-	  //deletePurchase(args, callbackContext)
-	  //return true
-	//}
-	//else if(action == "confirmPurchase") {
-	  //confirmPurchase(args, callbackContext)
-	  //return true
-	//}
+	else if(action == "deletePurchase") {
+	  deletePurchase(args, callbackContext)
+	  return true
+	}
+	else if(action == "confirmPurchase") {
+	  confirmPurchase(args, callbackContext)
+	  return true
+	}
 
     return false
   }
