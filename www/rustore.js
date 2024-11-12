@@ -92,6 +92,28 @@ var argscheck = require('cordova/argscheck');
 		argscheck.checkArgs('*', 'RuStore.purchaseProduct', arguments)
 		exec(onSuccess, onError, 'RuStorePlugin', 'purchaseProduct', [product])
 	}
+
+	 /**
+          * Confirm the specified purchase
+          * @param product A product which needs to be confirmed
+          * @param onSuccess A callback that will be called if all went ok
+          * @param onError A callback that will be called if there's some error
+          */
+         RuStore.prototype.confirmPurchase = function (product, onSuccess, onError) {
+                 argscheck.checkArgs('S', 'RuStore.confirmPurchase', arguments)
+                 exec(onSuccess, onError, 'RuStorePlugin', 'confirmPurchase', [product])
+         }
+
+         /**
+          * Delete the specified purchase
+          * @param product A product which needs to be deleted
+          * @param onSuccess A callback that will be called if all went ok
+          * @param onError A callback that will be called if there's some error
+          */
+         RuStore.prototype.deletePurchase = function (product, onSuccess, onError) {
+                 argscheck.checkArgs('S', 'RuStore.deletePurchase', arguments)
+                 exec(onSuccess, onError, 'RuStorePlugin', 'deletePurchase', [product])
+         }
 	
 	module.exports = new RuStore()
 })(window)
