@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-  xmlns:android="http://schemas.android.com/apk/res/android" 
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   id="cordova-plugin-rustore-sdk" version="0.9.0">
 
   <name>Cordova RuStore SDK Plugin</name>
   <description>A plugin for Cordova Android which provides RuStore SDK functionality</description>
-  <author>bumpercarz</author>  
+  <author>bumpercarz</author>
   <license>MIT</license>
   <keywords>cordova,android,rustore,sdk</keywords>
   <repo>https://github.com/creakosta/cordova-plugin-rustore-sdk.git</repo>
@@ -22,22 +22,22 @@
 
   <!-- android -->
   <platform name="android">
-	  
+
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="RuStorePlugin">
         <param name="android-package" value="org.apache.cordova.plugin.RuStorePlugin"/>
       </feature>
     </config-file>
-	  
-    <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
+
+    <config-file target="AndroidManifest.xml" parent="/manifest">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
       <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     </config-file>
-    
+
     <source-file src="src/android/RuStorePlugin.kt" target-dir="app/src/main/kotlin/org/apache/cordova/plugin"/>
 
     <framework src="src/android/cordovaAF.gradle" custom="true" type="gradleReference"/>
-	  
+
   </platform>
 </plugin>
